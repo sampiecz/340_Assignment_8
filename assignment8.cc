@@ -10,8 +10,11 @@
  ************************************************************/
 #include <iostream>
 #include <string>
+#include <vector>
 #include "assignment8.h"
 
+using std::vector;
+using std::string;
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -137,21 +140,21 @@ HT::~HT()
 int HT::search( const string& key )
 {
 
-    int hashKey =  hasing(key.key);
+    int hashKey =  hashing(key.key);
     // if the search is successful return the position
-    while( hashkey < hTable )
+    for(; hashKey < hTable; hashKey++ )
     {
-        if( hTable[hashkey] == "---" )
+        Entry& accessEntryInTable = (*hTable)[hashKey];
+
+        if( accessEntryInTable == "+++" || accessEntryInTable == Entry().key )
         {
             return false;
         }
         
-        if( hTable[hashkey] == key )
+        if( accessEntryInTable.key == key )
         {
             return hashKey;
         }
-
-        hashkey++;
 
     }
 
@@ -175,16 +178,16 @@ bool HT::insert( const Entry& e )
 {
 	int hashKey = hashing(e.key);
 	
-	for(int i = 0; i < table_size; i++)
+	for(; i < table_size; i++)
 	{
-		if(hTable[hashKey].key == "---")
+        Entry& accessEntryInTable = (*hTable)[hashKey]; 
+		if(accessEntryInTable.key == Entry().key || accessEntryInTable == "+++")
 		{
-	
-			hTable[hashKey] = e;
 			item_count++;
+            accessEntryInTable = e;
 			return true;
 		}
-		if(hTable[hashKey].key != "---")
+		if(accessEntryInTable.key != e.key)
 		{
 			cerr << "This key is already in the table." << endl; 
 			return false;
@@ -224,11 +227,15 @@ bool HT::remove( const string& s )
  ***************************************************************/
 void HT::print()
 {
-	for(int i = 0; i < table_size; i++)
+	for(int index = 0; index < table_size; index++)
 	{
-		// put a pointer to hTable maybe but its a data member???
-		Entry entryObject = hTable[i];
-		cout << "Key: " << entryObject.key << " " << "Description: " entryObject.description << endl;
+        Entry& accessEntryInIndex = (*hTable)[index];
+        if(accessEntryInIndex.key == Entry().key || accessEntryInIndex.key == "+++")
+        {
+            continue;
+        }
+
+		cout << "Key: " << accessEntryInIndex.key << " " << "Description: " << accessEntryInIndex.description << endl;
 	}
 }
 
@@ -245,9 +252,9 @@ void HT::print()
  ***************************************************************/
 Entry* get_entry ( const string& line )
 {
-    Entry* e new Entry;
-    e-> key = line.substr(2,3);
-    e->description = line.substr(5,8);
+    Entry* e = new Entry;
+    e->key = line.substr(2,3);
+    e->description = line.substr(6);
     return e;
 }
 
