@@ -27,6 +27,7 @@ class HT {
         int item_count;
         int hashing(const std::string&);
     public:
+        HT();
         HT(int size);
         ~HT();
         bool insert(const Entry&);
